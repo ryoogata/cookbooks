@@ -15,3 +15,12 @@ cookbook_file "/tmp/wiki3_6_4.zip" do
   source "wiki3_6_4.zip"
   mode "0644"
 end
+
+script "unzip" do
+  interpreter "bash"
+  user "root"
+  cwd "/tmp"
+  code <<-EOH
+  unzip wiki3_6_4.zip
+  EOH
+end
