@@ -6,13 +6,12 @@ template "/root/backup.conf" do
         mode 0600
 end
 
-#FIX-ME: sed がうまく動かない
+
 # backup.conf のスペースを削除し、"," を改行に変換する
-script "sed" do
-       interpreter "bash"
-       user "root"
-       cwd "/root"
-       code <<-EOH
-		/bin/sed -i "s/,/\n/g" /root/backup.conf
-       EOH
+script "setup_backup.conf" do
+	interpreter "bash"
+	code <<-EOH
+		sed -i "s/ //g" /root/backup.conf
+		sed -i "s/,/\\n/g" /root/backup.conf
+	EOH
 end
