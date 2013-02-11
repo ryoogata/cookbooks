@@ -35,9 +35,9 @@ end
 
 #s3fs の Download
 git "/tmp/s3fs-cloudpack" do
-  repository "git://github.com/memorycraft/s3fs-cloudpack.git "
-  reference "master"
-  action :sync
+	repository "git://github.com/memorycraft/s3fs-cloudpack.git "
+	reference "master"
+	action :sync
 end
 
 
