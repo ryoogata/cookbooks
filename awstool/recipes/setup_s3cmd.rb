@@ -2,7 +2,7 @@
 %w{
 	python-magic unzip wget
 }.each do |package_name|
-        package package_name do
+        package "#{package_name}" do
                 action :install
         end
 end
