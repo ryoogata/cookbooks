@@ -27,7 +27,7 @@ end
 	curl-devel libxml2-devel openssl-devel
 	git
 }.each do |package_name|
-        package package_name do
+        package "#{package_name}" do
                 action :install
         end
 end
