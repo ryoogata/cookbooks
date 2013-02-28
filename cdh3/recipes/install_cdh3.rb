@@ -1,0 +1,99 @@
+# パスワードなしで sudo が実行できるように設定
+script "setup_backup.conf" do
+interpreter "bash"
+	code <<-EOH
+		sed -i "s/# %wheel/ %wheel/" /etc/sudoers
+	EOH
+end
+
+
+# Source ファイルの設置
+cookbook_file "/tmp/jdk-6u39-linux-x64-rpm.bin" do
+        source "jdk-6u39-linux-x64-rpm.bin"
+        mode "0755"
+end
+
+
+# JDK のインストール
+execute "jdk-6u39-linux-x64-rpm.bin" do
+	command 'echo | /tmp/jdk-6u39-linux-x64-rpm.bin'
+end
+
+
+# Java コマンドの切り替え
+execute "alternatives" do
+	command 'alternatives --install /usr/bin/java java /usr/java/jdk1.6.0_39/bin/java 20000'
+end
+
+
+# Host 共通の環境変数を設定
+cookbook_file "/etc/profile.d/java.sh" do
+        source "java.sh"
+        mode "0755"
+end
+
+
+# CDH3 の Repository の取得
+remote_file "/tmp/cdh3-repository-1.0-1.noarch.rpm" do
+	source "http://archive.cloudera.com/redhat/6/x86_64/cdh/cdh3-repository-1.0-1.noarch.rpm"
+end
+
+# CDH3 の Repository のインストール
+package "cdh3-repository" do
+	action :install
+	source "/tmp/cdh3-repository-1.0-1.noarch.rpm"
+	provider Chef::Provider::Package::Rpm
+end
+
+
+# Hadoop 本体のインストール
+package "hadoop-0.20" do
+	action :install
+end
+
+
+# 作業 Directory の作成
+%w{
+	hadoop hadoop/input
+}.each do |directory_name|
+	directory "/home/ec2-user/#{directory_name}" do
+		owner "ec2-user"
+		group "ec2-user"
+		mode 00755
+		action :create
+		recursive true
+	end
+end
+
+
+# サンプルデータの取得 ( 吾輩は猫である )
+cookbook_file "/tmp/wagahaiwa_nekodearu.txt.zip" do
+        source "wagahaiwa_nekodearu.txt.zip"
+end
+
+
+# サンプルデータの展開
+script "unzip" do
+       interpreter "bash"
+       user "root"
+       cwd "/tmp"
+       code <<-EOH
+               unzip wagahaiwa_nekodearu.txt.zip
+       EOH
+end
+
+
+# 疑似分散モード利用の為のパッケージのインストール
+package "hadoop-0.20-conf-pseudo" do
+	action :install
+end
+
+
+# 各サービスの起動
+%w{
+	hadoop-0.20-namenode hadoop-0.20-datanode hadoop-0.20-secondarynamenode hadoop-0.20-tasktracker hadoop-0.20-jobtracker
+}.each do |service_name|
+	execute "#{service_name}" do
+		command "/etc/init.d/#{service_name} start"
+	end
+end
