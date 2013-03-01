@@ -7,6 +7,12 @@ interpreter "bash"
 end
 
 
+# unzip のインストール
+package "unzip" do
+	action :install
+end
+
+
 # Source ファイルの設置
 cookbook_file "/tmp/jdk-6u39-linux-x64-rpm.bin" do
         source "jdk-6u39-linux-x64-rpm.bin"
@@ -38,6 +44,7 @@ remote_file "/tmp/cdh3-repository-1.0-1.noarch.rpm" do
 	source "http://archive.cloudera.com/redhat/6/x86_64/cdh/cdh3-repository-1.0-1.noarch.rpm"
 end
 
+
 # CDH3 の Repository のインストール
 package "cdh3-repository" do
 	action :install
@@ -56,10 +63,7 @@ end
 %w{
 	hadoop hadoop/input
 }.each do |directory_name|
-	directory "/home/ec2-user/#{directory_name}" do
-		owner "ec2-user"
-		group "ec2-user"
-		mode 00755
+	directory "/tmp/#{directory_name}" do
 		action :create
 		recursive true
 	end
@@ -89,11 +93,40 @@ package "hadoop-0.20-conf-pseudo" do
 end
 
 
-# 各サービスの起動
-%w{
-	hadoop-0.20-namenode hadoop-0.20-datanode hadoop-0.20-secondarynamenode hadoop-0.20-tasktracker hadoop-0.20-jobtracker
-}.each do |service_name|
-	execute "#{service_name}" do
-		command "/etc/init.d/#{service_name} start"
-	end
+#%w{
+#       hadoop-0.20-namenode hadoop-0.20-datanode hadoop-0.20-secondarynamenode hadoop-0.20-tasktracker hadoop-0.20-jobtracker
+#}.each do |service_name|
+##      execute "#{service_name}" do
+#               command "/etc/init.d/#{service_name} start"
+#       end
+#end
+
+
+# ネームノードを起動する
+service "hadoop-0.20-namenode" do
+	action :start
+end
+
+
+# データノードを起動する
+service "hadoop-0.20-datanode" do
+	action :start
+end
+
+
+# セカンダリネームノードを起動する
+service "hadoop-0.20-secondarynamenode" do
+	action :start
+end
+
+
+# タスクトラッカーを起動する
+service "hadoop-0.20-tasktracker" do
+	action :start
+end
+
+
+# ジョブトラッカーを起動する
+service "hadoop-0.20-jobtracker" do
+	action :start
 end
