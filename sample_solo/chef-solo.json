@@ -1,4 +1,5 @@
 {
-  "memo": "10.0.0.1",
-  "run_list": [ "recipe[sample_solo]", "recipe[sample_solo::apache]" ]
+	"run_list": [
+		"recipe[cdh3::install_cdh3]"
+	]
 }
