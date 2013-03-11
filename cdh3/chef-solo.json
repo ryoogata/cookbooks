@@ -1,5 +1,5 @@
 {
 	"run_list": [
-		"recipe[cdh3::install_cdh3], recipe[cdh3::install_hbase]"
+		"recipe[cdh3::install_cdh3_pseudo]"
 	]
 }

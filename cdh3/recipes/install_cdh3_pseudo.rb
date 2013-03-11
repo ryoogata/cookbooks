@@ -39,6 +39,11 @@ cookbook_file "/etc/profile.d/java.sh" do
 end
 
 
+execute "java.sh" do
+        command 'bash /etc/profile.d/java.sh'
+end
+
+
 # CDH3 の Repository の取得
 remote_file "/tmp/cdh3-repository-1.0-1.noarch.rpm" do
 	source "http://archive.cloudera.com/redhat/6/x86_64/cdh/cdh3-repository-1.0-1.noarch.rpm"
@@ -91,15 +96,6 @@ end
 package "hadoop-0.20-conf-pseudo" do
 	action :install
 end
-
-
-#%w{
-#       hadoop-0.20-namenode hadoop-0.20-datanode hadoop-0.20-secondarynamenode hadoop-0.20-tasktracker hadoop-0.20-jobtracker
-#}.each do |service_name|
-##      execute "#{service_name}" do
-#               command "/etc/init.d/#{service_name} start"
-#       end
-#end
 
 
 # ネームノードを起動する

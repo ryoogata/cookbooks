@@ -1,3 +1,6 @@
+CREATE DATABASE SALES_SAMPLE COMMENT 'サンプルデータ格納DB';
+
+USE SALES_SAMPLE;
 CREATE TABLE SALES
 (
   SALES_ID INT COMMENT '注文番号',
@@ -43,10 +46,15 @@ ROW FORMAT DELIMITED
   LINES TERMINATED BY '\n'
 ;
 
-hive> LOAD DATA LOCAL INPATH '/home/hiveuser/hive/sales_sample/sales.tsv' INTO TABLE SALES;
-hive> LOAD DATA LOCAL INPATH '/home/hiveuser/hive/sales_sample/sales_detail.tsv' INTO TABLE SALES_DETAIL;
-hive> LOAD DATA LOCAL INPATH '/home/hiveuser/hive/sales_sample/itemlist.tsv' INTO TABLE ITEM_MASTER;
-hive> LOAD DATA LOCAL INPATH '/home/hiveuser/hive/sales_sample/shoplist.tsv' INTO TABLE SHOP_MASTER;
+
+LOAD DATA LOCAL INPATH '/home/hiveuser/hive/sales_sample/sales.tsv' INTO TABLE SALES;
+LOAD DATA LOCAL INPATH '/home/hiveuser/hive/sales_sample/sales_detail.tsv' INTO TABLE SALES_DETAIL;
+LOAD DATA LOCAL INPATH '/home/hiveuser/hive/sales_sample/itemlist.tsv' INTO TABLE ITEM_MASTER;
+LOAD DATA LOCAL INPATH '/home/hiveuser/hive/sales_sample/shoplist.tsv' INTO TABLE SHOP_MASTER;
+
+
+SELECT * FROM SALES WHERE SALES_DATE LIKE '2012-02%' LIMIT 10;
+
 
 
 SELECT S.SHOP_CODE, SUM(SD.UNIT_PRICE * SD.QUANTITY)
